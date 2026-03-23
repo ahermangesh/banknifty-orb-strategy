@@ -1,0 +1,8 @@
+Total Return: 4.65%
+Annualized Return: 0.50%
+Sharpe Ratio: 1.611
+Max Drawdown: -0.35%
+Win Rate: 52.88%
+Total Trades: 2173
+Avg Trade Duration (min): 223.3
+Profit Factor: 1.370
