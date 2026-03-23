@@ -24,13 +24,14 @@ import data_loader
 import strategy
 import backtester
 import analysis
+import bonus
 
 
 DATA_PATH       = "data/banknifty_candlestick_data.csv"
 INITIAL_CAPITAL = 1_000_000.0
 
 
-def main(data_path: str = DATA_PATH, capital: float = INITIAL_CAPITAL) -> None:
+def main(data_path: str = DATA_PATH, capital: float = INITIAL_CAPITAL, run_bonus: bool = False) -> None:
     t0 = time.perf_counter()
 
     # ── 1. Load data ─────────────────────────────────────────────────────────
@@ -62,6 +63,15 @@ def main(data_path: str = DATA_PATH, capital: float = INITIAL_CAPITAL) -> None:
         result.signals, result.trades, result.portfolio, params
     )
 
+    # ── 6. Bonus features (optional) ─────────────────────────────────────────
+    if run_bonus:
+        print("\n" + "=" * 55)
+        print("  Running Bonus Extensions")
+        print("=" * 55)
+        bonus.run_oos_test(df, params, initial_capital=capital)
+        bonus.walk_forward_optimise(df, params, initial_capital=capital)
+        bonus.add_volatility_sizing(df, params, initial_capital=capital)
+
     elapsed = time.perf_counter() - t0
     print(f"\n  Total runtime  : {elapsed:.1f}s")
     print("=" * 55)
@@ -82,5 +92,10 @@ if __name__ == "__main__":
         default=INITIAL_CAPITAL,
         help=f"Initial capital in INR (default: {INITIAL_CAPITAL:,.0f})",
     )
+    parser.add_argument(
+        "--bonus",
+        action="store_true",
+        help="Run bonus features: OOS test, walk-forward optimisation, vol sizing",
+    )
     args = parser.parse_args()
-    main(data_path=args.data, capital=args.capital)
+    main(data_path=args.data, capital=args.capital, run_bonus=args.bonus)

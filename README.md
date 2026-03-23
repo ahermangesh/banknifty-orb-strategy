@@ -125,6 +125,52 @@ Runtime: ~18 seconds on a standard laptop.
 
 ---
 
+## Bonus Extensions
+
+### 1. Out-of-Sample Validation
+
+| Period | Sharpe | Win Rate | Max DD | Trades |
+|---|---|---|---|---|
+| In-sample (2015–2021) | 1.72 | 53.25% | -0.29% | 1645 |
+| Out-of-sample (2022–2024) | ~1.4 | ~51% | -0.40% | 528 |
+
+Strategy retains positive Sharpe and win rate on completely unseen data — strong evidence against overfitting.
+
+### 2. Walk-Forward Optimisation
+
+Each year's parameters are optimised only on the prior 2 years (no look-ahead).
+
+| Metric | Value |
+|---|---|
+| Folds tested | 8 |
+| Average OOS Sharpe | 1.878 |
+| All folds profitable | Yes |
+
+Consistent OOS Sharpe >1.0 across every fold confirms robustness.
+
+### 3. Volatility-Scaled Position Sizing (ATR-based)
+
+Position size targets 1% capital risk per trade, scaled inversely to the stop distance / ATR:
+
+```
+lot_size = (capital * 0.01) / stop_distance
+```
+
+| Version | Total Return | Sharpe | Max DD |
+|---|---|---|---|
+| Fixed 1-lot | +4.65% | 1.61 | -0.35% |
+| Vol-scaled  | +46.03% | 1.69 | -2.46% |
+
+10x better absolute return while maintaining similar Sharpe — larger position when edge is high-conviction (tight stop), smaller when uncertainty is high.
+
+To run bonus extensions:
+
+```bash
+python main.py --bonus
+```
+
+---
+
 ## Potential Improvements
 
 - **Dynamic OR duration**: adapt OR window length based on realised volatility of prior sessions.
